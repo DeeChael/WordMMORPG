@@ -1,8 +1,13 @@
+from typing import List
+
+from .entity_type import PLAYER
+from .item import ItemStack, ItemType
+from .item_type import NONE, ARROW
+from .mob import Entity
 from .player_class import PlayerClass, SubClass
-from .stats import StatsHolder
 
 
-class Player(StatsHolder):
+class Player(Entity):
     """
     Lv1: 0
     Lv5: 200
@@ -39,6 +44,13 @@ class Player(StatsHolder):
     id: str
     name: str
     experience: int
+    _head: ItemStack = NONE
+    _chest: ItemStack = NONE
+    _legs: ItemStack = NONE
+    _feet: ItemStack = NONE
+    _glove: ItemStack = NONE
+    _inventory: List[ItemStack]
+    _active_arrow: ItemType = NONE
 
     def __init__(self, player_class: PlayerClass, sub_class: SubClass, id: str, name: str,
                  experience: int, health: int, max_health: int, mana: int, max_mana, hunger: int):
@@ -47,7 +59,7 @@ class Player(StatsHolder):
         self.id = id
         self.name = name
         self.experience = experience
-        super().__init__(health, max_health, mana, max_mana, hunger)
+        super().__init__(PLAYER, health, max_health, mana, max_mana, hunger)
 
     def level(self) -> int:
         if self.experience >= 197000:
@@ -86,7 +98,17 @@ class Player(StatsHolder):
             return rest // 50 if rest % 50 == 0 else rest // 50 + 1
 
     def has_arrows(self, amount: int) -> bool:
-        pass
+        for item_stack in self.inventory:
+            if item_stack.get_type() == ARROW:
+                if item_stack.get_amount() >= amount:
+                    return True
+        return False
 
     def reduce_arrows(self, amount: int):
+        for item_stack in self.inventory:
+            if item_stack.get_type() == ARROW:
+                if item_stack.get_amount() > amount:
+                    item_stack.set_amount(item_stack.get_amount() - amount)
+                elif item_stack.get_amount() == amount:
+                    self.inventory.remove(item_stack)
         pass

@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class PlayerClass(Enum):
-    KNIGHT = "knight" # 骑士，使用单手剑
-    WARRIOR = "warrior" # 战士，使用双手剑
+    KNIGHT = "knight" # 骑士，使用单手剑（可双持）
+    WARRIOR = "warrior" # 战士，使用单手剑或双手剑
     TANK = "tank" # 坦克，使用盾牌
     MAGE = "mage" # 法师，使用法杖
     ARCHER = "archer" # 射手，使用弓箭
