@@ -1,11 +1,11 @@
 from .entity_type import SLIME
-from .item import ItemType, WeaponItemType, Rarity, BowItemType, WandItemType, SummonThingItemType
+from .item import SimpleItemType, WeaponItemType, Rarity, BowItemType, WandItemType, SummonThingItemType
 from .player_class import PlayerClass
 
-NONE = ItemType("", "", False, Rarity.NONE)
+NONE = SimpleItemType("", "", False, Rarity.NONE)
 
 # OTHERS
-ARROW = ItemType("arrow", "箭矢", True, Rarity.COMMON)
+ARROW = SimpleItemType("arrow", "箭矢", True, Rarity.COMMON)
 
 # WEAPONS
 # SWORDS

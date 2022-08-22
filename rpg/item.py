@@ -42,6 +42,18 @@ class ItemType(ABC):
         pass
 
 
+class SimpleItemType(ItemType):
+
+    def __init__(self, identity: str, display_name: str, stackable: bool, rarity: Rarity):
+        super().__init__(identity, display_name, stackable, rarity)
+
+    def is_weapon(self) -> bool:
+        return False
+
+    def is_usable(self) -> bool:
+        return False
+
+
 class WeaponItemType(ItemType):
 
     weapon_type: Tuple[PlayerClass]

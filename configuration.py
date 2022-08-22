@@ -394,7 +394,14 @@ class JsonConfiguration(MemoryConfiguration):
         self._file = file
         self.load()
 
+    def exists(self) -> bool:
+        return os.path.exists(self._file) and os.path.isfile(self._file)
+
     def save(self):
+        if "/" in self._file:
+            parent_dir = self._file.rsplit("/", 1)[0]
+            if not os.path.exists(parent_dir):
+                os.makedirs(parent_dir)
         with open(self._file, 'w') as configuration_file:
             configuration_file.write(json.dumps(self._content))
 
@@ -423,7 +430,14 @@ class YamlConfiguration(MemoryConfiguration):
         self._file = file
         self.load()
 
+    def exists(self) -> bool:
+        return os.path.exists(self._file) and os.path.isfile(self._file)
+
     def save(self):
+        if "/" in self._file:
+            parent_dir = self._file.rsplit("/", 1)[0]
+            if not os.path.exists(parent_dir):
+                os.makedirs(parent_dir)
         with open(self._file, 'w') as configuration_file:
             yaml.dump(self._content, configuration_file)
 

@@ -1,6 +1,5 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 
 class Lootable:
-
-    loots: Dict[Item]
+    loots: Dict[str, Tuple[int]]

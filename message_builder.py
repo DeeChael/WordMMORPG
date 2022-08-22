@@ -3,6 +3,8 @@ from typing import Union
 from khl import User
 from khl.card import Element, Types, CardMessage, Card, Module
 
+from configuration import JsonConfiguration
+from rpg.player import Player
 from rpg.player_class import PlayerClass, class_chinese_name, class_description
 
 
@@ -34,6 +36,25 @@ def choose_class() -> CardMessage:
     message.append(Card(
         theme=Types.Theme.NONE,
         *modules
+    ))
+    return message
+
+
+def stat_card(player: Player) -> CardMessage:
+    message = CardMessage()
+    message.append(Card(
+        theme=Types.Theme.NONE,
+        *(Module.Header("玩家数据"),
+          Module.Section(Element.Text(
+              f"**玩家名称**: {player.name}\n"
+              f"**玩家等级**: {player.level()}\n"
+              f"**当前经验值**: {player.experience}\n"
+              f"**血量**: {player.get_health()}/{player.get_max_health()}\n"
+              f"**魔力**: {player.get_mana()}/{player.get_max_mana()}\n"
+              f"**饥饿值**: {player.get_hunger()}",
+              type=Types.Text.KMD
+          ))
+          )
     ))
     return message
 

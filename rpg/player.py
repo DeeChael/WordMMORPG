@@ -1,5 +1,7 @@
+import json
 from typing import List
 
+from configuration import JsonConfiguration
 from .entity_type import PLAYER
 from .item import ItemStack, ItemType
 from .item_type import NONE, ARROW
@@ -49,17 +51,19 @@ class Player(Entity):
     _legs: ItemStack = NONE
     _feet: ItemStack = NONE
     _glove: ItemStack = NONE
-    _inventory: List[ItemStack]
+    _inventory: List[ItemStack] = list()
     _active_arrow: ItemType = NONE
 
-    def __init__(self, player_class: PlayerClass, sub_class: SubClass, id: str, name: str,
-                 experience: int, health: int, max_health: int, mana: int, max_mana, hunger: int):
-        self.player_class = player_class
-        self.sub_class = sub_class
-        self.id = id
-        self.name = name
-        self.experience = experience
-        super().__init__(PLAYER, health, max_health, mana, max_mana, hunger)
+    player_config: JsonConfiguration
+
+    def __init__(self, **kwargs):
+        self.player_class = PlayerClass(kwargs.get("class")) if "class" in kwargs else None
+        self.sub_class = SubClass(kwargs.get("subclass", "none"))
+        self.id = kwargs.get("id", "")
+        self.name = kwargs.get("name", "")
+        self.experience = kwargs.get("experience", 0)
+        super().__init__(PLAYER, kwargs.get("health", 100), kwargs.get("max_health", 100), kwargs.get("mana", 50), kwargs.get("max_mana", 50), kwargs.get("hunger", 100))
+        self.player_config = kwargs.get("config")
 
     def level(self) -> int:
         if self.experience >= 197000:
@@ -98,17 +102,38 @@ class Player(Entity):
             return rest // 50 if rest % 50 == 0 else rest // 50 + 1
 
     def has_arrows(self, amount: int) -> bool:
-        for item_stack in self.inventory:
+        for item_stack in self._inventory:
             if item_stack.get_type() == ARROW:
                 if item_stack.get_amount() >= amount:
                     return True
         return False
 
     def reduce_arrows(self, amount: int):
-        for item_stack in self.inventory:
+        for item_stack in self._inventory:
             if item_stack.get_type() == ARROW:
                 if item_stack.get_amount() > amount:
                     item_stack.set_amount(item_stack.get_amount() - amount)
                 elif item_stack.get_amount() == amount:
-                    self.inventory.remove(item_stack)
+                    self._inventory.remove(item_stack)
         pass
+
+    def base_damage(self) -> float:
+        return 1.0
+
+    def save_config(self):
+        self.player_config._content = json.loads(str(self))
+        self.player_config.save()
+
+    def __str__(self):
+        stat = dict()
+        stat['name'] = self.name
+        stat['id'] = self.id
+        stat['class'] = self.player_class.value
+        stat['subclass'] = self.sub_class.value
+        stat['experience'] = self.experience
+        stat['health'] = self._health
+        stat['max_health'] = self._max_health
+        stat['mana'] = self._mana
+        stat['max_mana'] = self._max_mana
+        stat['hunger'] = self._hunger
+        return json.dumps(stat)
